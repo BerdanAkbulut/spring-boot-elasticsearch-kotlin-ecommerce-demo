@@ -7,6 +7,7 @@ import co.elastic.clients.elasticsearch.core.GetRequest
 import co.elastic.clients.elasticsearch.core.SearchRequest
 import co.elastic.clients.elasticsearch.core.SearchResponse
 import com.berdanakbulut.kotlinecommercedemo.config.elasticsearch.AppConfig.ELASTICSEARCH_ECOMMERCE_INDEX_NAME
+import com.berdanakbulut.kotlinecommercedemo.exceptions.NotFoundException
 import com.berdanakbulut.kotlinecommercedemo.repository.ElasticSearchRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
@@ -22,7 +23,7 @@ class ElasticSearchRepositoryImpl: ElasticSearchRepository {
         var getRequest: GetRequest = GetRequest.of {q -> q.index(ELASTICSEARCH_ECOMMERCE_INDEX_NAME).id(id)}
         val getResponse = client.get(getRequest, EcommerceOrder::class.java)
 
-        if(!getResponse.found() || getResponse.source() == null) throw IllegalStateException("Order not found with by id $id")
+        if(!getResponse.found() || getResponse.source() == null) throw NotFoundException("Order not found with by id $id")
         return getResponse.source()!!
     }
 
